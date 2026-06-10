@@ -8,26 +8,40 @@
   -webkit-font-smoothing: antialiased;
   --ink: #1d1d1f;
   --muted: #6e6e73;
+  --subtle: #86868b;
   --line: #d2d2d7;
-  --hairline: #e0e0e0;
+  --hairline: #e8e8ed;
   --panel: #ffffff;
   --soft: #f5f5f7;
   --pearl: #fafafc;
   --blue: #0066cc;
   --blue-focus: #0071e3;
-  --blue-on-dark: #2997ff;
-  --dark: #272729;
-  --dark-2: #2a2a2c;
+  --blue-soft: #e6f0fa;
+  --green: #078f5b;
+  --green-soft: #e7f7ee;
+  --purple: #7c3aed;
+  --purple-soft: #f1e8ff;
+  --amber: #b76a00;
+  --amber-soft: #fff4da;
+  --red: #c43636;
+  --red-soft: #ffe9e9;
   --danger: #a02e55;
-  --shadow: 0 3px 5px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.08);
+  --danger-soft: #fff2f6;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 20px 70px rgba(0, 0, 0, 0.16);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--soft);
+}
+
 body {
-  background: #f5f5f7;
+  background: var(--soft);
   margin: 0;
   min-width: 320px;
 }
@@ -58,44 +72,67 @@ button:not(.portfolioCard):active {
 
 .appShell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) 360px;
-  min-height: 100vh;
+  grid-template-columns: 260px minmax(0, 1fr) 380px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar,
 .detailPanel {
-  background: rgba(245, 245, 247, 0.82);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(255, 255, 255, 0.92);
   border-color: var(--hairline);
   border-style: solid;
   height: 100vh;
   overflow: auto;
-  position: sticky;
-  top: 0;
 }
 
 .sidebar {
   border-width: 0 1px 0 0;
-  padding: 26px 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
 
 .detailPanel {
   border-width: 0 0 0 1px;
-  padding: 30px 28px;
+  padding: 24px;
+}
+
+.sidebar::-webkit-scrollbar,
+.detailPanel::-webkit-scrollbar,
+.masonryViewport::-webkit-scrollbar,
+.addModal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.detailPanel::-webkit-scrollbar-track,
+.masonryViewport::-webkit-scrollbar-track,
+.addModal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.detailPanel::-webkit-scrollbar-thumb,
+.masonryViewport::-webkit-scrollbar-thumb,
+.addModal::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
 }
 
 .brandBlock {
+  border-bottom: 1px solid var(--hairline);
   display: grid;
-  gap: 18px;
-  margin-bottom: 26px;
+  gap: 16px;
+  padding: 24px 20px 18px;
 }
 
 .eyebrow {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--subtle);
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0;
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   text-transform: uppercase;
 }
 
@@ -109,8 +146,8 @@ p {
 h1 {
   color: var(--ink);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  font-size: 34px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
   line-height: 1.08;
   margin-bottom: 0;
 }
@@ -118,17 +155,17 @@ h1 {
 h2 {
   color: var(--ink);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.12;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.14;
   margin-bottom: 0;
 }
 
 h3 {
   color: var(--ink);
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
   margin-bottom: 8px;
 }
 
@@ -138,12 +175,14 @@ h3 {
 .textButton,
 .chip,
 .tagChip,
-.iconButton {
+.iconButton,
+.detailCloseButton {
   border: 0;
-  border-radius: 999px;
+  border-radius: 10px;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
+    box-shadow 160ms ease,
     color 160ms ease,
     transform 120ms ease;
 }
@@ -152,10 +191,10 @@ h3 {
   background: var(--blue);
   box-shadow: none;
   color: white;
-  font-size: 15px;
-  font-weight: 400;
-  min-height: 44px;
-  padding: 0 22px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 42px;
+  padding: 0 18px;
 }
 
 .primaryButton:hover {
@@ -164,73 +203,83 @@ h3 {
 
 .secondaryButton {
   background: var(--panel);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: var(--blue);
-  font-size: 14px;
-  font-weight: 400;
-  min-height: 42px;
-  padding: 0 18px;
-}
-
-.secondaryButton:hover {
-  border-color: rgba(0, 102, 204, 0.35);
-}
-
-.dangerButton {
-  background: #fff2f6;
-  border: 1px solid rgba(160, 46, 85, 0.18);
-  color: var(--danger);
-  font-size: 14px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 13px;
   font-weight: 600;
-  min-height: 42px;
-  padding: 0 18px;
-}
-
-.smallButton {
-  min-height: 34px;
+  min-height: 38px;
   padding: 0 14px;
 }
 
+.secondaryButton:hover {
+  background: var(--pearl);
+  border-color: #bfc0c7;
+}
+
+.dangerButton {
+  background: var(--danger-soft);
+  border: 1px solid rgba(160, 46, 85, 0.16);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.smallButton {
+  min-height: 32px;
+  padding: 0 12px;
+}
+
 .notice {
+  animation: slideDown 220ms ease;
   background: #eef7ff;
   border: 1px solid #cfe2ff;
-  border-radius: 8px;
+  border-radius: 10px;
   color: #244a91;
   font-size: 13px;
-  font-weight: 600;
-  margin: 0 0 18px;
-  padding: 11px 12px;
+  font-weight: 700;
+  margin: 14px 20px 0;
+  padding: 10px 12px;
 }
 
 .fieldLabel {
   color: var(--muted);
   display: grid;
   font-size: 13px;
-  font-weight: 600;
-  gap: 8px;
-  margin-bottom: 18px;
+  font-weight: 700;
+  gap: 7px;
+  margin-bottom: 0;
 }
 
 input,
 textarea,
 select,
 .textInput {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   color: var(--ink);
-  min-height: 44px;
+  min-height: 40px;
   outline: none;
-  padding: 11px 16px;
+  padding: 9px 12px;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
   width: 100%;
 }
 
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868b' d='M3 5h6L6 8z'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
 textarea {
-  border-radius: 18px;
-  line-height: 1.47;
+  border-radius: 12px;
+  line-height: 1.5;
   resize: vertical;
 }
 
@@ -238,23 +287,32 @@ input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.12);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
 }
 
-.filterGroup {
-  margin: 22px 0;
+.filterGroup,
+.featuredToggle,
+.backupPanel,
+.countPanel,
+.sidebar > .fieldLabel,
+.sidebar > .formGrid {
+  border-bottom: 1px solid var(--hairline);
+  margin: 0;
+  padding: 18px 20px;
 }
 
 .sidebarGrid {
-  gap: 8px;
-  grid-template-columns: 1fr;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
 }
 
 .filterTitle {
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  color: var(--subtle);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .categoryGrid,
@@ -264,18 +322,26 @@ select:focus {
 .cardTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
 }
 
 .chip,
 .tagChip {
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  color: #333333;
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  color: #424245;
   font-size: 12px;
-  font-weight: 400;
-  min-height: 32px;
-  padding: 0 12px;
+  font-weight: 600;
+  min-height: 30px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.chip:hover,
+.tagChip:hover {
+  background: var(--blue-soft);
+  border-color: rgba(0, 102, 204, 0.2);
+  color: var(--blue);
 }
 
 .chip.active,
@@ -289,10 +355,9 @@ select:focus {
   align-items: center;
   color: var(--ink);
   display: flex;
-  font-size: 14px;
-  font-weight: 400;
-  gap: 10px;
-  margin: 14px 0;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 9px;
 }
 
 .featuredToggle input {
@@ -308,69 +373,81 @@ select:focus {
   justify-content: space-between;
 }
 
+.tagList {
+  max-height: 132px;
+  overflow: auto;
+}
+
 .textButton {
   background: transparent;
   color: var(--blue);
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 700;
   padding: 4px 0;
 }
 
-.countPanel {
-  background: var(--panel);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
-  margin-top: 24px;
-  padding: 20px;
+.textButton:hover {
+  color: var(--blue-focus);
 }
 
 .backupPanel {
   display: grid;
-  gap: 10px;
-  margin-top: 22px;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
 }
 
 .hiddenInput {
   display: none;
 }
 
+.countPanel {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
 .countPanel span {
   color: var(--ink);
   display: block;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  font-size: 40px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 800;
   line-height: 1;
 }
 
 .countPanel p {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 400;
-  margin: 6px 0 0;
+  font-weight: 500;
+  margin: 0;
 }
 
 .boardArea {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: 28px;
+  overflow: hidden;
 }
 
 .boardHeader {
   align-items: end;
   display: flex;
+  flex-shrink: 0;
   justify-content: space-between;
-  margin-bottom: 22px;
+  padding: 24px 26px 16px;
 }
 
 .boardHeader p:last-child {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 600;
   margin: 0;
 }
 
 .masonryViewport {
-  min-height: calc(100vh - 112px);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 26px 28px;
   width: 100%;
 }
 
@@ -380,15 +457,16 @@ select:focus {
 }
 
 .portfolioCard {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
   color: inherit;
   display: flex;
   flex-direction: column;
   gap: 13px;
   left: 0;
+  overflow: hidden;
   padding: 18px;
   position: absolute;
   text-align: left;
@@ -396,14 +474,31 @@ select:focus {
   transition:
     box-shadow 180ms ease,
     border-color 180ms ease,
-    background-color 180ms ease;
+    background-color 180ms ease,
+    opacity 180ms ease;
 }
 
-.portfolioCard:hover,
+.portfolioCard:hover {
+  background: white;
+  border-color: #c7c7cc;
+  box-shadow: var(--shadow-md);
+}
+
 .portfolioCard.selected {
   background: white;
-  border-color: rgba(0, 102, 204, 0.4);
-  box-shadow: var(--shadow);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue), var(--shadow-md);
+}
+
+.portfolioCard.selected::after {
+  background: var(--blue);
+  border-radius: 999px;
+  content: "";
+  height: 38px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 4px;
 }
 
 .cardTopline,
@@ -421,37 +516,55 @@ select:focus {
 }
 
 .categoryPill,
-.featuredBadge {
-  border-radius: 999px;
+.featuredBadge,
+.statusBadge {
+  border-radius: 7px;
   display: inline-flex;
-  font-size: 12px;
-  font-weight: 600;
-  min-height: 24px;
-  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  min-height: 23px;
+  padding: 4px 8px;
 }
 
 .categoryPill {
-  background: #f5f5f7;
-  color: #333333;
+  background: var(--blue-soft);
+  color: var(--blue);
 }
 
-.categoryPill.activity,
-.categoryPill.certificate,
-.categoryPill.award,
-.categoryPill.study,
+.categoryPill.activity {
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+.categoryPill.certificate {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.categoryPill.award {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.categoryPill.study {
+  background: #e6f7fa;
+  color: #087f9b;
+}
+
 .categoryPill.retrospective {
-  background: #f5f5f7;
-  color: #333333;
+  background: var(--red-soft);
+  color: var(--red);
 }
 
 .featuredBadge {
-  background: var(--dark);
+  background: var(--ink);
   color: white;
 }
 
 .portfolioCard h3 {
-  font-size: 19px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
   margin: 0;
 }
 
@@ -467,17 +580,17 @@ select:focus {
 
 .cardThumb {
   aspect-ratio: 16 / 9;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08), 0 12px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 .detailThumb,
 .thumbnailPreview {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
 }
 
 .thumbnailPreview {
   margin: 0 0 18px;
-  max-height: 260px;
+  max-height: 240px;
 }
 
 .statusLine {
@@ -486,33 +599,28 @@ select:focus {
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
   gap: 8px;
 }
 
-.statusBadge {
-  border-radius: 999px;
-  display: inline-flex;
-  font-size: 12px;
-  font-weight: 600;
-  min-height: 24px;
-  padding: 5px 10px;
-}
-
 .statusBadge.planning {
-  background: #f5f5f7;
-  color: #333333;
+  background: var(--soft);
+  color: var(--muted);
 }
 
-.statusBadge.in-progress,
-.statusBadge.done {
-  background: #e8f3ff;
+.statusBadge.in-progress {
+  background: var(--blue-soft);
   color: var(--blue);
 }
 
+.statusBadge.done {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
 .statusBadge.archived {
-  background: #eeeeef;
-  color: var(--muted);
+  background: var(--amber-soft);
+  color: var(--amber);
 }
 
 .summary {
@@ -524,36 +632,51 @@ select:focus {
 
 .stackList span,
 .detailChips span {
-  background: #f5f5f7;
-  border-radius: 999px;
-  color: #333333;
+  background: var(--pearl);
+  border-radius: 7px;
+  color: #424245;
   font-size: 12px;
-  font-weight: 400;
-  padding: 6px 10px;
+  font-weight: 600;
+  padding: 5px 9px;
 }
 
 .cardTags span,
 .detailChips.tags span {
   color: var(--blue);
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .emptyState {
   align-items: center;
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
   color: var(--muted);
   display: flex;
-  font-weight: 400;
+  font-weight: 600;
   justify-content: center;
-  min-height: 260px;
+  min-height: 300px;
+  text-align: center;
 }
 
 .detailPanel article {
   display: grid;
-  gap: 22px;
+  gap: 20px;
+}
+
+.detailCloseButton {
+  background: var(--pearl);
+  color: var(--muted);
+  display: none;
+  height: 34px;
+  justify-self: end;
+  width: 34px;
+}
+
+.detailCloseButton:hover {
+  background: var(--hairline);
+  color: var(--ink);
 }
 
 .detailActions {
@@ -573,43 +696,62 @@ select:focus {
 }
 
 .detailPanel h2 {
-  font-size: 34px;
+  font-size: 26px;
 }
 
 .detailDate {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 400;
+  color: var(--subtle);
+  font-size: 12px;
+  font-weight: 600;
   margin: 0;
 }
 
 .detailSummary {
+  border-bottom: 1px solid var(--hairline);
   color: #424245;
-  font-size: 17px;
-  line-height: 1.47;
+  font-size: 16px;
+  line-height: 1.55;
   margin: 0;
+  padding-bottom: 18px;
 }
 
 .detailPanel section {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding-top: 18px;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.detailPanel section h3 {
+  color: var(--subtle);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .detailPanel section p {
   color: #424245;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.65;
   margin-bottom: 0;
+  white-space: pre-wrap;
+}
+
+.linkRow {
+  border-top: 1px solid var(--hairline);
+  padding-top: 18px;
 }
 
 .linkRow a {
-  background: var(--blue);
-  border-radius: 999px;
-  color: white;
-  font-size: 14px;
-  font-weight: 400;
-  padding: 10px 16px;
+  background: var(--blue-soft);
+  border-radius: 10px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 14px;
   text-decoration: none;
+}
+
+.linkRow a:hover {
+  background: #d9ebff;
 }
 
 .detailEmpty {
@@ -617,7 +759,8 @@ select:focus {
   color: var(--muted);
   display: grid;
   height: 100%;
-  justify-items: start;
+  justify-items: center;
+  text-align: center;
 }
 
 .detailEmpty h2 {
@@ -625,27 +768,34 @@ select:focus {
   margin-bottom: 8px;
 }
 
+.detailEmpty p {
+  line-height: 1.5;
+  max-width: 240px;
+}
+
 .modalBackdrop {
   align-items: center;
-  background: rgba(0, 0, 0, 0.38);
+  animation: fadeIn 180ms ease;
+  background: rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(10px);
   display: flex;
   inset: 0;
   justify-content: center;
   padding: 22px;
   position: fixed;
-  z-index: 20;
+  z-index: 100;
 }
 
 .addModal {
-  background: rgba(255, 255, 255, 0.96);
+  animation: modalIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 18px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08), 0 24px 70px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-lg);
   max-height: min(880px, calc(100vh - 44px));
-  max-width: 820px;
+  max-width: 760px;
   overflow: auto;
-  padding: 24px;
+  padding: 26px;
   width: 100%;
 }
 
@@ -657,32 +807,67 @@ select:focus {
 }
 
 .iconButton {
-  background: rgba(210, 210, 215, 0.64);
+  background: var(--pearl);
+  color: var(--muted);
+  font-weight: 800;
+  height: 36px;
+  width: 36px;
+}
+
+.iconButton:hover {
+  background: var(--hairline);
   color: var(--ink);
-  font-weight: 600;
-  height: 44px;
-  width: 44px;
 }
 
 .formGrid {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.formGrid.sidebarGrid {
-  grid-template-columns: 1fr;
+  margin-bottom: 14px;
 }
 
 .thumbnailTools {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: -4px 0 18px;
+  margin: 0 0 18px;
 }
 
 .modalToggle {
+  border: 0;
   margin: 4px 0 20px;
+  padding: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 1180px) {
@@ -691,11 +876,35 @@ select:focus {
   }
 
   .detailPanel {
-    border-width: 1px 0 0;
-    grid-column: 1 / -1;
-    height: auto;
-    max-height: none;
-    position: static;
+    border-width: 0 0 0 1px;
+    bottom: 0;
+    box-shadow: var(--shadow-lg);
+    display: block;
+    height: 100vh;
+    max-width: min(390px, 92vw);
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transform: translateX(18px);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+    width: 390px;
+    z-index: 50;
+  }
+
+  .detailPanel.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .detailCloseButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -711,29 +920,59 @@ select:focus {
 @media (max-width: 780px) {
   .appShell {
     display: block;
-  }
-
-  .sidebar,
-  .detailPanel {
-    border-width: 0 0 1px;
     height: auto;
-    position: static;
+    overflow: visible;
   }
 
   .sidebar {
-    padding: 22px 18px;
+    border-width: 0 0 1px;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .brandBlock {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .brandBlock .primaryButton {
+    min-width: 112px;
   }
 
   .boardArea {
-    padding: 20px 16px;
+    min-height: 70vh;
+    overflow: visible;
   }
 
   .boardHeader {
     align-items: start;
     gap: 8px;
+    padding: 22px 16px 14px;
   }
 
-  .formGrid {
+  .masonryViewport {
+    overflow: visible;
+    padding: 0 16px 24px;
+  }
+
+  .formGrid,
+  .sidebarGrid {
     grid-template-columns: 1fr;
+  }
+
+  .backupPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .detailPanel {
+    border-width: 0;
+    max-width: 100vw;
+    width: 100vw;
+  }
+
+  .addModal {
+    max-height: calc(100vh - 28px);
+    padding: 22px;
   }
 }

@@ -130,6 +130,7 @@ function App() {
   const boardRef = useRef<HTMLDivElement | null>(null)
   const importInputRef = useRef<HTMLInputElement | null>(null)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
 
   useEffect(() => {
     const ok = saveItems(items)
@@ -166,6 +167,23 @@ function App() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isEditorOpen])
+
+  useEffect(() => {
+    function handleGlobalKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'n') {
+        event.preventDefault()
+        openAddEditor()
+        return
+      }
+
+      if (event.key === 'Escape' && detailOpen && !isEditorOpen) {
+        setDetailOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [detailOpen, isEditorOpen])
 
   const tags = useMemo(() => {
     const allTags = items.flatMap((item) => item.tags)
@@ -499,7 +517,10 @@ function App() {
                       width: position.width,
                       height: position.height,
                     }}
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => {
+                      setSelectedId(item.id)
+                      setDetailOpen(true)
+                    }}
                   >
                     {item.thumbnailUrl && (
                       <img className="cardThumb" src={item.thumbnailUrl} alt="" loading="lazy" onError={useFallbackThumbnail} />
@@ -532,9 +553,12 @@ function App() {
         </div>
       </main>
 
-      <aside className="detailPanel">
+      <aside className={detailOpen ? 'detailPanel open' : 'detailPanel'}>
         {selectedItem ? (
           <article>
+            <button type="button" className="detailCloseButton" onClick={() => setDetailOpen(false)} aria-label="상세 패널 닫기">
+              X
+            </button>
             {selectedItem.thumbnailUrl && (
               <img className="detailThumb" src={selectedItem.thumbnailUrl} alt="" loading="lazy" onError={useFallbackThumbnail} />
             )}
@@ -614,11 +638,12 @@ function App() {
       </aside>
 
       {isEditorOpen && (
-        <div className="modalBackdrop" role="presentation">
+        <div className="modalBackdrop" role="presentation" onClick={closeEditor}>
           <form
             className="addModal"
             onSubmit={handleSaveItem}
             role="dialog"
+            onClick={(event) => event.stopPropagation()}
             aria-modal="true"
             aria-label={editingId ? '포트폴리오 항목 수정' : '포트폴리오 항목 추가'}
           >
