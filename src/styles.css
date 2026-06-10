@@ -40,6 +40,15 @@ button {
   cursor: pointer;
 }
 
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
 .appShell {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr) 360px;
@@ -75,9 +84,9 @@ button {
 
 .eyebrow {
   color: var(--violet);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.04em;
   margin: 0 0 6px;
   text-transform: uppercase;
 }
@@ -449,8 +458,8 @@ select:focus {
   color: var(--muted);
   display: flex;
   flex-wrap: wrap;
-  font-size: 11px;
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: 800;
   gap: 8px;
 }
 
@@ -548,7 +557,7 @@ select:focus {
   color: var(--muted);
   font-size: 13px;
   font-weight: 800;
-  margin: -12px 0 0;
+  margin: 0;
 }
 
 .detailSummary {
@@ -662,6 +671,15 @@ select:focus {
     height: auto;
     max-height: none;
     position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

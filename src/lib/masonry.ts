@@ -13,7 +13,7 @@ export function buildMasonryLayout(items: PortfolioItem[], containerWidth: numbe
   const columnCount = getColumnCount(containerWidth)
   const cardWidth = Math.floor((containerWidth - GAP * (columnCount - 1)) / columnCount)
   const columnHeights = Array.from({ length: columnCount }, () => 0)
-  const positions: MasonryCardPosition[] = []
+  const positionById = new Map<string, MasonryCardPosition>()
 
   for (const item of items) {
     const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
@@ -27,7 +27,7 @@ export function buildMasonryLayout(items: PortfolioItem[], containerWidth: numbe
     const top = columnHeights[columnIndex]
     const left = columnIndex * (cardWidth + GAP)
 
-    positions.push({
+    positionById.set(item.id, {
       id: item.id,
       top,
       left,
@@ -39,7 +39,7 @@ export function buildMasonryLayout(items: PortfolioItem[], containerWidth: numbe
   }
 
   return {
-    positions,
+    positionById,
     height: Math.max(0, ...columnHeights) - GAP,
     columnCount,
   }

@@ -69,6 +69,12 @@ export function loadItems(): PortfolioItem[] {
   }
 }
 
-export function saveItems(items: PortfolioItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+export function saveItems(items: PortfolioItem[]): boolean {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    return true
+  } catch {
+    console.warn('Failed to save items to localStorage (quota likely exceeded)')
+    return false
+  }
 }

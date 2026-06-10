@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { buildMasonryLayout } from './lib/masonry'
 import { loadItems, normalizeItems, saveItems } from './lib/storage'
 import type { PortfolioCategory, PortfolioItem, PortfolioStatus } from './types'
@@ -84,8 +84,12 @@ function parseImportPayload(text: string) {
 }
 
 function App() {
-  const [items, setItems] = useState<PortfolioItem[]>(() => loadItems())
-  const [selectedId, setSelectedId] = useState<string | null>(() => loadItems()[0]?.id ?? null)
+  const initialItems = useRef<PortfolioItem[] | null>(null)
+  if (!initialItems.current) {
+    initialItems.current = loadItems()
+  }
+  const [items, setItems] = useState<PortfolioItem[]>(initialItems.current)
+  const [selectedId, setSelectedId] = useState<string | null>(initialItems.current[0]?.id ?? null)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<'All' | PortfolioCategory>('All')
   const [statusFilter, setStatusFilter] = useState<'All' | PortfolioStatus>('All')
@@ -102,7 +106,8 @@ function App() {
   const imageInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    saveItems(items)
+    const ok = saveItems(items)
+    if (!ok) setNotice('⚠️ Could not save — storage full. Export your data soon.')
   }, [items])
 
   useEffect(() => {
@@ -122,6 +127,17 @@ function App() {
     const timer = window.setTimeout(() => setNotice(''), 3200)
     return () => window.clearTimeout(timer)
   }, [notice])
+
+  useEffect(() => {
+    if (!isEditorOpen) return
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        closeEditor()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isEditorOpen])
 
   const tags = useMemo(() => {
     const allTags = items.flatMap((item) => item.tags)
@@ -171,7 +187,6 @@ function App() {
   }, [filteredItems, selectedId])
 
   const masonry = useMemo(() => buildMasonryLayout(filteredItems, boardWidth), [boardWidth, filteredItems])
-  const positionById = useMemo(() => new Map(masonry.positions.map((position) => [position.id, position])), [masonry])
 
   function updateDraft<Key extends keyof Draft>(key: Key, value: Draft[Key]) {
     setDraft((current) => ({ ...current, [key]: value }))
@@ -246,8 +261,13 @@ function App() {
 
     setItems((current) => {
       const next = current.filter((candidate) => candidate.id !== item.id)
-      setSelectedId(next[0]?.id ?? null)
       return next
+    })
+    setSelectedId((current) => {
+      if (current === item.id) {
+        return items.find((i) => i.id !== item.id)?.id ?? null
+      }
+      return current
     })
     setNotice('Item deleted')
   }
@@ -301,6 +321,15 @@ function App() {
     reader.onload = () => {
       try {
         const importedItems = parseImportPayload(String(reader.result ?? ''))
+        if (items.length > 0) {
+          const confirmed = window.confirm(
+            `This will replace your current ${items.length} items with ${importedItems.length} imported items. Continue?`
+          )
+          if (!confirmed) {
+            if (importInputRef.current) importInputRef.current.value = ''
+            return
+          }
+        }
         setItems(importedItems)
         setSelectedId(importedItems[0]?.id ?? null)
         setSearch('')
@@ -431,7 +460,7 @@ function App() {
           ) : (
             <div className="masonryBoard" style={{ height: masonry.height }}>
               {filteredItems.map((item) => {
-                const position = positionById.get(item.id)
+                const position = masonry.positionById.get(item.id)
                 if (!position) return null
 
                 return (
@@ -445,7 +474,7 @@ function App() {
                     }}
                     onClick={() => setSelectedId(item.id)}
                   >
-                    {item.thumbnailUrl && <img className="cardThumb" src={item.thumbnailUrl} alt="" />}
+                    {item.thumbnailUrl && <img className="cardThumb" src={item.thumbnailUrl} alt="" loading="lazy" />}
                     <div className="cardTopline">
                       <span className={`categoryPill ${item.category.toLowerCase()}`}>{item.category}</span>
                       {item.featured && <span className="featuredBadge">Featured</span>}
@@ -477,7 +506,7 @@ function App() {
       <aside className="detailPanel">
         {selectedItem ? (
           <article>
-            {selectedItem.thumbnailUrl && <img className="detailThumb" src={selectedItem.thumbnailUrl} alt="" />}
+            {selectedItem.thumbnailUrl && <img className="detailThumb" src={selectedItem.thumbnailUrl} alt="" loading="lazy" />}
             <div className="detailActions">
               <div className="detailMeta">
                 <span className={`categoryPill ${selectedItem.category.toLowerCase()}`}>{selectedItem.category}</span>
@@ -555,7 +584,7 @@ function App() {
 
       {isEditorOpen && (
         <div className="modalBackdrop" role="presentation">
-          <form className="addModal" onSubmit={handleSaveItem}>
+          <form className="addModal" onSubmit={handleSaveItem} role="dialog" aria-modal="true" aria-label={editingId ? 'Edit portfolio item' : 'Add portfolio item'}>
             <div className="modalHeader">
               <div>
                 <p className="eyebrow">{editingId ? 'Edit record' : 'New record'}</p>
