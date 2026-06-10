@@ -1,0 +1,10 @@
+node_modules/
+dist/
+work/
+outputs/
+.DS_Store
+*.local
+*.log
+*.tgz
+*.tsbuildinfo
+node_modules/.tmp/
