@@ -3,19 +3,19 @@ import type { PortfolioItem } from '../types'
 export const sampleItems: PortfolioItem[] = [
   {
     id: 'seed-foliovault',
-    title: 'FolioVault Masonry Archive',
+    title: 'FolioVault 메이슨리 아카이브',
     category: 'Project',
     status: 'Done',
     summary:
-      'A personal portfolio vault for collecting projects, study logs, certificates, and retrospectives in a responsive masonry board.',
+      '프로젝트, 공부 기록, 자격증, 회고를 반응형 Masonry 보드에 모아 관리하는 개인 포트폴리오 저장소입니다.',
     description:
-      'Built a portfolio management interface that keeps fragmented achievements in one searchable place. The board estimates each card height before layout so the visual rhythm stays compact even when summaries have different lengths.',
+      '흩어진 성취와 기록을 검색 가능한 한 공간에 모으는 포트폴리오 관리 인터페이스를 만들었습니다. 요약 길이가 달라도 카드 높이를 미리 예측해 촘촘하고 안정적인 보드 흐름을 유지합니다.',
     techStack: ['React', 'TypeScript', 'Vite', 'Pretext', 'CSS'],
     problemSolving:
-      'The hardest part was making masonry placement deterministic while summary text remains fluid. Pretext-based text measurement feeds the placement engine before absolute positions are assigned.',
+      '가장 어려웠던 부분은 요약 텍스트가 유동적으로 바뀌는 상황에서도 Masonry 배치를 예측 가능하게 유지하는 일이었습니다. Pretext 기반 텍스트 측정값을 배치 엔진에 전달한 뒤 absolute 위치를 계산했습니다.',
     learned:
-      'Text metrics become much more useful when layout and data filtering are separated. The same height estimator can support search, filters, and responsive column changes.',
-    tags: ['portfolio', 'masonry', 'frontend'],
+      '텍스트 측정, 필터링, 레이아웃 계산을 분리하면 훨씬 다루기 쉬워진다는 점을 배웠습니다. 같은 높이 추정 로직이 검색, 필터, 반응형 열 변경에도 그대로 적용됩니다.',
+    tags: ['포트폴리오', 'masonry', '프론트엔드'],
     githubUrl: 'https://github.com/example/foliovault',
     demoUrl: 'https://example.com/foliovault',
     thumbnailUrl: '/thumbnails/foliovault.png',
@@ -25,19 +25,19 @@ export const sampleItems: PortfolioItem[] = [
   },
   {
     id: 'seed-study-react',
-    title: 'React Rendering Notes',
+    title: 'React 렌더링 노트',
     category: 'Study',
     status: 'In Progress',
     summary:
-      'Collected notes about component boundaries, memoization, derived state, controlled inputs, and practical rendering performance checks.',
+      '컴포넌트 경계, 메모이제이션, 파생 상태, 제어 입력, 렌더링 성능 점검 방법을 정리한 공부 기록입니다.',
     description:
-      'A study record focused on React mental models. It includes small experiments for state lifting, reducer-driven forms, and render tracing with browser devtools.',
+      'React 사고 모델을 정리하기 위한 학습 기록입니다. 상태 끌어올리기, reducer 기반 폼, 브라우저 개발자 도구를 활용한 렌더 추적 실험을 포함합니다.',
     techStack: ['React', 'JavaScript', 'DevTools'],
     problemSolving:
-      'Converted vague performance concerns into visible render traces and targeted component changes.',
+      '막연했던 성능 걱정을 실제 렌더 추적으로 확인하고, 필요한 컴포넌트만 대상으로 개선했습니다.',
     learned:
-      'Most rendering issues became clearer after separating state ownership from display components.',
-    tags: ['react', 'study', 'performance'],
+      '대부분의 렌더링 문제는 상태 소유권과 표시 컴포넌트를 분리했을 때 훨씬 명확해졌습니다.',
+    tags: ['react', '공부', '성능'],
     thumbnailUrl: '/thumbnails/react-notes.png',
     featured: false,
     createdAt: '2026-03-02T13:30:00.000Z',
@@ -45,38 +45,38 @@ export const sampleItems: PortfolioItem[] = [
   },
   {
     id: 'seed-cert-cloud',
-    title: 'Cloud Practitioner Certificate',
+    title: '클라우드 기초 자격증',
     category: 'Certificate',
     status: 'Done',
     summary:
-      'Validated core cloud concepts, billing models, IAM basics, deployment patterns, and shared responsibility boundaries.',
+      '클라우드 핵심 개념, 과금 모델, IAM 기초, 배포 패턴, 공동 책임 모델을 검증한 자격 기록입니다.',
     description:
-      'Prepared with daily quizzes and short architecture sketches. The certificate helped organize cloud terminology into a practical foundation for web deployment decisions.',
+      '매일 짧은 퀴즈와 아키텍처 스케치로 준비했습니다. 이 자격증을 통해 클라우드 용어를 웹 배포 의사결정에 필요한 실용적인 기반으로 정리할 수 있었습니다.',
     techStack: ['Cloud', 'IAM', 'Networking'],
     problemSolving:
-      'Mapped abstract service names to concrete deployment scenarios to make memorization less brittle.',
+      '추상적인 서비스 이름을 실제 배포 시나리오와 연결해 단순 암기에 그치지 않도록 만들었습니다.',
     learned:
-      'Cost, observability, and identity design should be considered before the first production deployment.',
-    tags: ['certificate', 'cloud', 'infra'],
+      '첫 프로덕션 배포 전에 비용, 관측 가능성, 권한 설계를 함께 고려해야 한다는 점을 배웠습니다.',
+    tags: ['자격증', 'cloud', 'infra'],
     featured: true,
     createdAt: '2026-01-19T08:15:00.000Z',
     updatedAt: '2026-01-19T08:15:00.000Z',
   },
   {
     id: 'seed-hackathon',
-    title: 'Campus Accessibility Hackathon',
+    title: '캠퍼스 접근성 해커톤',
     category: 'Activity',
     status: 'Archived',
     summary:
-      'Collaborated on a map prototype that lets students report blocked ramps, broken elevators, and accessible route notes.',
+      '막힌 경사로, 고장 난 엘리베이터, 접근 가능한 동선 메모를 학생들이 제보할 수 있는 지도 프로토타입을 협업했습니다.',
     description:
-      'The team built a clickable prototype and lightweight issue taxonomy during a weekend hackathon. I handled interaction flows and the report detail model.',
+      '주말 해커톤 동안 클릭 가능한 프로토타입과 가벼운 이슈 분류 체계를 만들었습니다. 저는 인터랙션 흐름과 제보 상세 모델을 담당했습니다.',
     techStack: ['Figma', 'React', 'Maps API'],
     problemSolving:
-      'Reduced noisy user reports by adding issue categories, optional photos, and a status field.',
+      '이슈 카테고리, 선택 사진, 상태 필드를 추가해 산만한 사용자 제보를 정리했습니다.',
     learned:
-      'Accessibility tools need maintenance workflows as much as discovery features.',
-    tags: ['accessibility', 'hackathon', 'ux'],
+      '접근성 도구에는 발견 기능만큼이나 유지보수 흐름이 중요하다는 점을 배웠습니다.',
+    tags: ['접근성', '해커톤', 'ux'],
     thumbnailUrl: '/thumbnails/hackathon.png',
     featured: false,
     createdAt: '2025-11-08T11:00:00.000Z',
@@ -84,38 +84,38 @@ export const sampleItems: PortfolioItem[] = [
   },
   {
     id: 'seed-retro',
-    title: 'First Production Launch Retrospective',
+    title: '첫 프로덕션 출시 회고',
     category: 'Retrospective',
     status: 'Done',
     summary:
-      'A launch review covering scope control, QA checklists, analytics events, rollback planning, and communication habits.',
+      '범위 관리, QA 체크리스트, 분석 이벤트, 롤백 계획, 커뮤니케이션 습관을 돌아본 출시 회고입니다.',
     description:
-      'Wrote a structured retrospective after shipping a small product feature. The document separates what went well, what surprised the team, and what should become a repeatable launch checklist.',
+      '작은 제품 기능을 배포한 뒤 구조화된 회고를 작성했습니다. 잘된 점, 예상 밖이었던 점, 반복 가능한 출시 체크리스트로 남길 점을 나눠 정리했습니다.',
     techStack: ['Product', 'QA', 'Analytics'],
     problemSolving:
-      'Turned scattered launch stress into concrete checklist items and ownership notes.',
+      '출시 과정의 산발적인 긴장감을 구체적인 체크리스트와 담당자 메모로 바꿨습니다.',
     learned:
-      'A boring release plan is a gift to future teammates.',
-    tags: ['retrospective', 'launch', 'process'],
+      '지루할 정도로 명확한 릴리스 계획은 미래의 팀원에게 큰 선물이 됩니다.',
+    tags: ['회고', '출시', '프로세스'],
     featured: true,
     createdAt: '2025-09-21T16:45:00.000Z',
     updatedAt: '2025-09-24T16:45:00.000Z',
   },
   {
     id: 'seed-award',
-    title: 'Open Source Contribution Award',
+    title: '오픈소스 기여상',
     category: 'Award',
     status: 'Done',
     summary:
-      'Recognized for documentation fixes, issue triage, and a small accessibility patch in an open source design tool.',
+      '오픈소스 디자인 도구에서 문서 개선, 이슈 정리, 접근성 패치를 진행한 공로를 인정받았습니다.',
     description:
-      'Contributed improvements to onboarding docs and fixed keyboard focus styling for a modal workflow. The maintainers highlighted the work in a community update.',
+      '온보딩 문서를 개선하고 모달 흐름의 키보드 포커스 스타일을 수정했습니다. 유지보수 팀이 커뮤니티 업데이트에서 해당 기여를 소개했습니다.',
     techStack: ['TypeScript', 'CSS', 'A11y'],
     problemSolving:
-      'Reproduced focus loss with keyboard-only navigation and added a regression checklist for the component.',
+      '키보드만 사용하는 탐색에서 포커스가 사라지는 문제를 재현하고, 컴포넌트 회귀 체크리스트를 추가했습니다.',
     learned:
-      'Small, well-scoped open source contributions can have outsized community value.',
-    tags: ['open-source', 'award', 'a11y'],
+      '작고 범위가 명확한 오픈소스 기여도 커뮤니티에는 큰 가치를 만들 수 있습니다.',
+    tags: ['오픈소스', '수상', 'a11y'],
     featured: false,
     createdAt: '2025-07-12T10:10:00.000Z',
     updatedAt: '2025-07-12T10:10:00.000Z',

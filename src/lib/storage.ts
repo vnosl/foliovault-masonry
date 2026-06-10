@@ -38,7 +38,7 @@ export function normalizeItems(value: unknown): PortfolioItem[] {
 
       return {
         id: readString(record, 'id', `imported-${index}-${crypto.randomUUID()}`),
-        title: readString(record, 'title', 'Untitled item'),
+        title: readString(record, 'title', '제목 없는 항목'),
         category: readCategory(record),
         status: readStatus(record),
         summary: readString(record, 'summary'),
@@ -74,7 +74,7 @@ export function saveItems(items: PortfolioItem[]): boolean {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
     return true
   } catch {
-    console.warn('Failed to save items to localStorage (quota likely exceeded)')
+    console.warn('localStorage 저장에 실패했습니다. 저장 공간이 부족할 수 있습니다.')
     return false
   }
 }

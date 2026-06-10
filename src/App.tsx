@@ -16,12 +16,31 @@ const categories: Array<'All' | PortfolioCategory> = [
 const statuses: Array<'All' | PortfolioStatus> = ['All', 'Planning', 'In Progress', 'Done', 'Archived']
 const editableStatuses: PortfolioStatus[] = ['Planning', 'In Progress', 'Done', 'Archived']
 const fallbackThumbnail = '/thumbnails/fallback.png'
+
+const categoryLabels: Record<'All' | PortfolioCategory, string> = {
+  All: '전체',
+  Project: '프로젝트',
+  Activity: '활동',
+  Certificate: '자격증',
+  Award: '수상',
+  Study: '공부',
+  Retrospective: '회고',
+}
+
+const statusLabels: Record<'All' | PortfolioStatus, string> = {
+  All: '전체',
+  Planning: '계획 중',
+  'In Progress': '진행 중',
+  Done: '완료',
+  Archived: '보관됨',
+}
+
 const sortOptions = [
-  { value: 'updated', label: 'Recently updated' },
-  { value: 'newest', label: 'Newest created' },
-  { value: 'oldest', label: 'Oldest created' },
-  { value: 'title', label: 'Title A-Z' },
-  { value: 'featured', label: 'Featured first' },
+  { value: 'updated', label: '최근 수정순' },
+  { value: 'newest', label: '최근 생성순' },
+  { value: 'oldest', label: '오래된 생성순' },
+  { value: 'title', label: '제목순' },
+  { value: 'featured', label: '대표 항목 우선' },
 ] as const
 
 type SortOption = (typeof sortOptions)[number]['value']
@@ -52,10 +71,10 @@ function splitList(value: string) {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
+  return new Intl.DateTimeFormat('ko-KR', {
     year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   }).format(new Date(value))
 }
 
@@ -80,7 +99,7 @@ function toDraft(item: PortfolioItem): Draft {
 function parseImportPayload(text: string) {
   const parsed = JSON.parse(text)
   const candidate = Array.isArray(parsed) ? parsed : parsed.items
-  if (!Array.isArray(candidate)) throw new Error('Invalid backup payload')
+  if (!Array.isArray(candidate)) throw new Error('올바른 백업 파일이 아닙니다.')
   return normalizeItems(candidate)
 }
 
@@ -94,6 +113,7 @@ function App() {
   if (!initialItems.current) {
     initialItems.current = loadItems()
   }
+
   const [items, setItems] = useState<PortfolioItem[]>(initialItems.current)
   const [selectedId, setSelectedId] = useState<string | null>(initialItems.current[0]?.id ?? null)
   const [search, setSearch] = useState('')
@@ -113,7 +133,7 @@ function App() {
 
   useEffect(() => {
     const ok = saveItems(items)
-    if (!ok) setNotice('⚠️ Could not save — storage full. Export your data soon.')
+    if (!ok) setNotice('저장 공간이 부족해 저장하지 못했습니다. JSON으로 백업해 주세요.')
   }, [items])
 
   useEffect(() => {
@@ -136,18 +156,20 @@ function App() {
 
   useEffect(() => {
     if (!isEditorOpen) return
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         closeEditor()
       }
     }
+
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isEditorOpen])
 
   const tags = useMemo(() => {
     const allTags = items.flatMap((item) => item.tags)
-    return Array.from(new Set(allTags)).sort((a, b) => a.localeCompare(b))
+    return Array.from(new Set(allTags)).sort((a, b) => a.localeCompare(b, 'ko-KR'))
   }, [items])
 
   const filteredItems = useMemo(() => {
@@ -162,6 +184,8 @@ function App() {
           item.problemSolving,
           item.learned,
           item.status,
+          statusLabels[item.status],
+          categoryLabels[item.category],
           ...item.tags,
           ...item.techStack,
         ]
@@ -177,7 +201,7 @@ function App() {
     })
 
     return [...filtered].sort((a, b) => {
-      if (sortBy === 'title') return a.title.localeCompare(b.title)
+      if (sortBy === 'title') return a.title.localeCompare(b.title, 'ko-KR')
       if (sortBy === 'oldest') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       if (sortBy === 'featured') {
         const featuredDelta = Number(b.featured) - Number(a.featured)
@@ -250,32 +274,29 @@ function App() {
       const updatedItem = buildItemFromDraft(existing)
       setItems((current) => current.map((item) => (item.id === editingId ? updatedItem : item)))
       setSelectedId(updatedItem.id)
-      setNotice('Item updated')
+      setNotice('항목을 수정했습니다.')
     } else {
       const newItem = buildItemFromDraft()
       setItems((current) => [newItem, ...current])
       setSelectedId(newItem.id)
-      setNotice('Item added')
+      setNotice('항목을 추가했습니다.')
     }
 
     closeEditor()
   }
 
   function handleDeleteItem(item: PortfolioItem) {
-    const confirmed = window.confirm(`Delete "${item.title}"? This cannot be undone.`)
+    const confirmed = window.confirm(`"${item.title}" 항목을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)
     if (!confirmed) return
 
-    setItems((current) => {
-      const next = current.filter((candidate) => candidate.id !== item.id)
-      return next
-    })
+    setItems((current) => current.filter((candidate) => candidate.id !== item.id))
     setSelectedId((current) => {
       if (current === item.id) {
         return items.find((i) => i.id !== item.id)?.id ?? null
       }
       return current
     })
-    setNotice('Item deleted')
+    setNotice('항목을 삭제했습니다.')
   }
 
   function handleThumbnailFile(event: ChangeEvent<HTMLInputElement>) {
@@ -283,12 +304,12 @@ function App() {
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      setNotice('Please choose an image file')
+      setNotice('이미지 파일을 선택해 주세요.')
       return
     }
 
     if (file.size > 1_200_000) {
-      setNotice('Image is too large for localStorage. Choose a file under 1.2 MB.')
+      setNotice('이미지가 너무 큽니다. 1.2MB 이하 파일을 선택해 주세요.')
       return
     }
 
@@ -296,7 +317,7 @@ function App() {
     reader.onload = () => {
       if (typeof reader.result === 'string') {
         updateDraft('thumbnailUrl', reader.result)
-        setNotice('Thumbnail loaded')
+        setNotice('썸네일을 불러왔습니다.')
       }
     }
     reader.readAsDataURL(file)
@@ -316,7 +337,7 @@ function App() {
     link.download = `foliovault-backup-${new Date().toISOString().slice(0, 10)}.json`
     link.click()
     URL.revokeObjectURL(url)
-    setNotice('Backup exported')
+    setNotice('JSON 백업을 내보냈습니다.')
   }
 
   function handleImport(event: ChangeEvent<HTMLInputElement>) {
@@ -329,7 +350,7 @@ function App() {
         const importedItems = parseImportPayload(String(reader.result ?? ''))
         if (items.length > 0) {
           const confirmed = window.confirm(
-            `This will replace your current ${items.length} items with ${importedItems.length} imported items. Continue?`
+            `현재 ${items.length}개 항목이 가져온 ${importedItems.length}개 항목으로 대체됩니다. 계속할까요?`
           )
           if (!confirmed) {
             if (importInputRef.current) importInputRef.current.value = ''
@@ -343,9 +364,9 @@ function App() {
         setStatusFilter('All')
         setFeaturedOnly(false)
         setActiveTag(null)
-        setNotice(`Imported ${importedItems.length} items`)
+        setNotice(`${importedItems.length}개 항목을 가져왔습니다.`)
       } catch {
-        setNotice('Import failed. Choose a valid FolioVault JSON file.')
+        setNotice('가져오기에 실패했습니다. 올바른 FolioVault JSON 파일을 선택해 주세요.')
       } finally {
         if (importInputRef.current) importInputRef.current.value = ''
       }
@@ -358,29 +379,29 @@ function App() {
       <aside className="sidebar">
         <div className="brandBlock">
           <div>
-            <p className="eyebrow">Personal archive</p>
+            <p className="eyebrow">개인 아카이브</p>
             <h1>FolioVault</h1>
           </div>
           <button className="primaryButton" onClick={openAddEditor}>
-            Add Item
+            항목 추가
           </button>
         </div>
 
         {notice && <div className="notice">{notice}</div>}
 
         <label className="fieldLabel">
-          Search
+          검색
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Title, stack, tags..."
+            placeholder="제목, 기술, 태그 검색..."
             className="textInput"
           />
         </label>
 
         <div className="formGrid sidebarGrid">
           <label className="fieldLabel">
-            Sort
+            정렬
             <select value={sortBy} onChange={(event) => setSortBy(event.target.value as SortOption)}>
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -390,11 +411,11 @@ function App() {
             </select>
           </label>
           <label className="fieldLabel">
-            Status
+            상태
             <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as 'All' | PortfolioStatus)}>
               {statuses.map((item) => (
                 <option key={item} value={item}>
-                  {item}
+                  {statusLabels[item]}
                 </option>
               ))}
             </select>
@@ -402,11 +423,11 @@ function App() {
         </div>
 
         <div className="filterGroup">
-          <p className="filterTitle">Category</p>
+          <p className="filterTitle">카테고리</p>
           <div className="categoryGrid">
             {categories.map((item) => (
               <button key={item} className={category === item ? 'chip active' : 'chip'} onClick={() => setCategory(item)}>
-                {item}
+                {categoryLabels[item]}
               </button>
             ))}
           </div>
@@ -414,15 +435,15 @@ function App() {
 
         <label className="featuredToggle">
           <input type="checkbox" checked={featuredOnly} onChange={(event) => setFeaturedOnly(event.target.checked)} />
-          Featured Only
+          대표 항목만
         </label>
 
         <div className="filterGroup">
           <div className="tagHeader">
-            <p className="filterTitle">Tags</p>
+            <p className="filterTitle">태그</p>
             {activeTag && (
               <button className="textButton" onClick={() => setActiveTag(null)}>
-                Clear
+                초기화
               </button>
             )}
           </div>
@@ -437,32 +458,32 @@ function App() {
 
         <div className="backupPanel">
           <button className="secondaryButton" onClick={handleExport}>
-            Export JSON
+            JSON 내보내기
           </button>
           <button className="secondaryButton" onClick={() => importInputRef.current?.click()}>
-            Import JSON
+            JSON 가져오기
           </button>
           <input ref={importInputRef} className="hiddenInput" type="file" accept="application/json" onChange={handleImport} />
         </div>
 
         <div className="countPanel">
           <span>{filteredItems.length}</span>
-          <p>cards in view</p>
+          <p>표시 중인 카드</p>
         </div>
       </aside>
 
       <main className="boardArea">
         <div className="boardHeader">
           <div>
-            <p className="eyebrow">Masonry board</p>
-            <h2>Portfolio items</h2>
+            <p className="eyebrow">Masonry 보드</p>
+            <h2>포트폴리오 항목</h2>
           </div>
-          <p>{masonry.columnCount} columns</p>
+          <p>{masonry.columnCount}열</p>
         </div>
 
         <div ref={boardRef} className="masonryViewport">
           {filteredItems.length === 0 ? (
-            <div className="emptyState">No matching cards. Try another search or filter.</div>
+            <div className="emptyState">조건에 맞는 카드가 없습니다. 검색어나 필터를 바꿔보세요.</div>
           ) : (
             <div className="masonryBoard" style={{ height: masonry.height }}>
               {filteredItems.map((item) => {
@@ -484,12 +505,12 @@ function App() {
                       <img className="cardThumb" src={item.thumbnailUrl} alt="" loading="lazy" onError={useFallbackThumbnail} />
                     )}
                     <div className="cardTopline">
-                      <span className={`categoryPill ${item.category.toLowerCase()}`}>{item.category}</span>
-                      {item.featured && <span className="featuredBadge">Featured</span>}
+                      <span className={`categoryPill ${item.category.toLowerCase()}`}>{categoryLabels[item.category]}</span>
+                      {item.featured && <span className="featuredBadge">대표</span>}
                     </div>
                     <div className="statusLine">
-                      <span className={`statusBadge ${item.status.toLowerCase().replaceAll(' ', '-')}`}>{item.status}</span>
-                      <span>Updated {formatDate(item.updatedAt)}</span>
+                      <span className={`statusBadge ${item.status.toLowerCase().replaceAll(' ', '-')}`}>{statusLabels[item.status]}</span>
+                      <span>{formatDate(item.updatedAt)} 수정</span>
                     </div>
                     <h3>{item.title}</h3>
                     <p className="summary">{item.summary}</p>
@@ -519,40 +540,40 @@ function App() {
             )}
             <div className="detailActions">
               <div className="detailMeta">
-                <span className={`categoryPill ${selectedItem.category.toLowerCase()}`}>{selectedItem.category}</span>
-                <span className={`statusBadge ${selectedItem.status.toLowerCase().replaceAll(' ', '-')}`}>{selectedItem.status}</span>
-                {selectedItem.featured && <span className="featuredBadge">Featured</span>}
+                <span className={`categoryPill ${selectedItem.category.toLowerCase()}`}>{categoryLabels[selectedItem.category]}</span>
+                <span className={`statusBadge ${selectedItem.status.toLowerCase().replaceAll(' ', '-')}`}>{statusLabels[selectedItem.status]}</span>
+                {selectedItem.featured && <span className="featuredBadge">대표</span>}
               </div>
               <div className="actionButtons">
                 <button className="secondaryButton smallButton" onClick={() => openEditEditor(selectedItem)}>
-                  Edit
+                  수정
                 </button>
                 <button className="dangerButton smallButton" onClick={() => handleDeleteItem(selectedItem)}>
-                  Delete
+                  삭제
                 </button>
               </div>
             </div>
             <h2>{selectedItem.title}</h2>
             <p className="detailDate">
-              Created {formatDate(selectedItem.createdAt)} · Updated {formatDate(selectedItem.updatedAt)}
+              생성 {formatDate(selectedItem.createdAt)} · 수정 {formatDate(selectedItem.updatedAt)}
             </p>
             <p className="detailSummary">{selectedItem.summary}</p>
 
             <section>
-              <h3>Description</h3>
+              <h3>설명</h3>
               <p>{selectedItem.description}</p>
             </section>
             <section>
-              <h3>Problem Solving</h3>
+              <h3>문제 해결</h3>
               <p>{selectedItem.problemSolving}</p>
             </section>
             <section>
-              <h3>Learned</h3>
+              <h3>배운 점</h3>
               <p>{selectedItem.learned}</p>
             </section>
 
             <section>
-              <h3>Tech Stack</h3>
+              <h3>기술 스택</h3>
               <div className="detailChips">
                 {selectedItem.techStack.map((tech) => (
                   <span key={tech}>{tech}</span>
@@ -561,7 +582,7 @@ function App() {
             </section>
 
             <section>
-              <h3>Tags</h3>
+              <h3>태그</h3>
               <div className="detailChips tags">
                 {selectedItem.tags.map((tag) => (
                   <span key={tag}>#{tag}</span>
@@ -578,7 +599,7 @@ function App() {
                 )}
                 {selectedItem.demoUrl && (
                   <a href={selectedItem.demoUrl} target="_blank" rel="noreferrer">
-                    Demo
+                    데모
                   </a>
                 )}
               </div>
@@ -586,36 +607,42 @@ function App() {
           </article>
         ) : (
           <div className="detailEmpty">
-            <h2>Select a card</h2>
-            <p>Click a portfolio card to open the full story here.</p>
+            <h2>카드를 선택하세요</h2>
+            <p>포트폴리오 카드를 클릭하면 전체 내용을 여기에서 볼 수 있습니다.</p>
           </div>
         )}
       </aside>
 
       {isEditorOpen && (
         <div className="modalBackdrop" role="presentation">
-          <form className="addModal" onSubmit={handleSaveItem} role="dialog" aria-modal="true" aria-label={editingId ? 'Edit portfolio item' : 'Add portfolio item'}>
+          <form
+            className="addModal"
+            onSubmit={handleSaveItem}
+            role="dialog"
+            aria-modal="true"
+            aria-label={editingId ? '포트폴리오 항목 수정' : '포트폴리오 항목 추가'}
+          >
             <div className="modalHeader">
               <div>
-                <p className="eyebrow">{editingId ? 'Edit record' : 'New record'}</p>
-                <h2>{editingId ? 'Edit portfolio item' : 'Add portfolio item'}</h2>
+                <p className="eyebrow">{editingId ? '기록 수정' : '새 기록'}</p>
+                <h2>{editingId ? '포트폴리오 항목 수정' : '포트폴리오 항목 추가'}</h2>
               </div>
-              <button type="button" className="iconButton" onClick={closeEditor}>
+              <button type="button" className="iconButton" onClick={closeEditor} aria-label="닫기">
                 X
               </button>
             </div>
 
             <div className="formGrid">
               <label className="fieldLabel">
-                Title
+                제목
                 <input required value={draft.title} onChange={(event) => updateDraft('title', event.target.value)} />
               </label>
               <label className="fieldLabel">
-                Category
+                카테고리
                 <select value={draft.category} onChange={(event) => updateDraft('category', event.target.value as PortfolioCategory)}>
                   {categories.slice(1).map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {categoryLabels[item]}
                     </option>
                   ))}
                 </select>
@@ -624,43 +651,43 @@ function App() {
 
             <div className="formGrid">
               <label className="fieldLabel">
-                Status
+                상태
                 <select value={draft.status} onChange={(event) => updateDraft('status', event.target.value as PortfolioStatus)}>
                   {editableStatuses.map((item) => (
                     <option key={item} value={item}>
-                      {item}
+                      {statusLabels[item]}
                     </option>
                   ))}
                 </select>
               </label>
               <label className="fieldLabel">
-                Thumbnail URL
+                썸네일 URL
                 <input value={draft.thumbnailUrl} onChange={(event) => updateDraft('thumbnailUrl', event.target.value)} />
               </label>
             </div>
 
             <div className="thumbnailTools">
               <button type="button" className="secondaryButton" onClick={() => imageInputRef.current?.click()}>
-                Upload Image
+                이미지 업로드
               </button>
               <button type="button" className="secondaryButton" onClick={() => updateDraft('thumbnailUrl', '')}>
-                Clear Image
+                이미지 지우기
               </button>
               <input ref={imageInputRef} className="hiddenInput" type="file" accept="image/*" onChange={handleThumbnailFile} />
             </div>
             {draft.thumbnailUrl && <img className="thumbnailPreview" src={draft.thumbnailUrl} alt="" />}
 
             <label className="fieldLabel">
-              Summary
+              요약
               <textarea required rows={3} value={draft.summary} onChange={(event) => updateDraft('summary', event.target.value)} />
             </label>
             <label className="fieldLabel">
-              Description
+              설명
               <textarea required rows={4} value={draft.description} onChange={(event) => updateDraft('description', event.target.value)} />
             </label>
             <div className="formGrid">
               <label className="fieldLabel">
-                Tech stack
+                기술 스택
                 <input
                   required
                   value={draft.techStack}
@@ -669,16 +696,16 @@ function App() {
                 />
               </label>
               <label className="fieldLabel">
-                Tags
+                태그
                 <input required value={draft.tags} onChange={(event) => updateDraft('tags', event.target.value)} placeholder="frontend, ui" />
               </label>
             </div>
             <label className="fieldLabel">
-              Problem Solving
+              문제 해결
               <textarea required rows={3} value={draft.problemSolving} onChange={(event) => updateDraft('problemSolving', event.target.value)} />
             </label>
             <label className="fieldLabel">
-              Learned
+              배운 점
               <textarea required rows={3} value={draft.learned} onChange={(event) => updateDraft('learned', event.target.value)} />
             </label>
             <div className="formGrid">
@@ -687,21 +714,21 @@ function App() {
                 <input value={draft.githubUrl} onChange={(event) => updateDraft('githubUrl', event.target.value)} />
               </label>
               <label className="fieldLabel">
-                Demo URL
+                데모 URL
                 <input value={draft.demoUrl} onChange={(event) => updateDraft('demoUrl', event.target.value)} />
               </label>
             </div>
             <label className="featuredToggle modalToggle">
               <input type="checkbox" checked={draft.featured} onChange={(event) => updateDraft('featured', event.target.checked)} />
-              Featured project
+              대표 항목
             </label>
 
             <div className="modalActions">
               <button type="button" className="secondaryButton" onClick={closeEditor}>
-                Cancel
+                취소
               </button>
               <button type="submit" className="primaryButton">
-                {editingId ? 'Save Changes' : 'Save Item'}
+                {editingId ? '변경사항 저장' : '항목 저장'}
               </button>
             </div>
           </form>
