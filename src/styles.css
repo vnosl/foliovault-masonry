@@ -513,7 +513,7 @@ select:focus {
 .detailChips.tags span {
   color: var(--blue);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 800;
 }
 
 .emptyState {
