@@ -1,23 +1,25 @@
 :root {
-  color: #162033;
-  background: #eef1f6;
+  color: #1d1d1f;
+  background: #f5f5f7;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --ink: #162033;
-  --muted: #687285;
-  --line: #dce1ea;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --hairline: #e0e0e0;
   --panel: #ffffff;
-  --soft: #f7f8fb;
-  --blue: #315bdc;
-  --violet: #7254e8;
-  --cyan: #0d8fa8;
-  --green: #27805d;
-  --orange: #b76220;
-  --rose: #bd3f6e;
-  --shadow: 0 16px 42px rgba(30, 39, 70, 0.11);
+  --soft: #f5f5f7;
+  --pearl: #fafafc;
+  --blue: #0066cc;
+  --blue-focus: #0071e3;
+  --blue-on-dark: #2997ff;
+  --dark: #272729;
+  --dark-2: #2a2a2c;
+  --danger: #a02e55;
+  --shadow: 0 3px 5px rgba(0, 0, 0, 0.04), 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -25,6 +27,7 @@
 }
 
 body {
+  background: #f5f5f7;
   margin: 0;
   min-width: 320px;
 }
@@ -45,8 +48,12 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--blue-focus);
   outline-offset: 2px;
+}
+
+button:not(.portfolioCard):active {
+  transform: scale(0.98);
 }
 
 .appShell {
@@ -57,13 +64,14 @@ a:focus-visible {
 
 .sidebar,
 .detailPanel {
-  background: rgba(255, 255, 255, 0.86);
-  border-color: var(--line);
+  background: rgba(245, 245, 247, 0.82);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-color: var(--hairline);
   border-style: solid;
-  position: sticky;
-  top: 0;
   height: 100vh;
   overflow: auto;
+  position: sticky;
+  top: 0;
 }
 
 .sidebar {
@@ -83,10 +91,10 @@ a:focus-visible {
 }
 
 .eyebrow {
-  color: var(--violet);
+  color: var(--muted);
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0;
   margin: 0 0 6px;
   text-transform: uppercase;
 }
@@ -99,19 +107,27 @@ p {
 }
 
 h1 {
-  font-size: 31px;
-  line-height: 1;
+  color: var(--ink);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.08;
   margin-bottom: 0;
 }
 
 h2 {
-  font-size: 23px;
-  line-height: 1.15;
+  color: var(--ink);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.12;
   margin-bottom: 0;
 }
 
 h3 {
-  font-size: 16px;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 600;
   line-height: 1.25;
   margin-bottom: 8px;
 }
@@ -124,37 +140,55 @@ h3 {
 .tagChip,
 .iconButton {
   border: 0;
-  border-radius: 8px;
+  border-radius: 999px;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
 }
 
 .primaryButton {
-  background: linear-gradient(135deg, var(--blue), var(--violet));
+  background: var(--blue);
+  box-shadow: none;
   color: white;
-  font-weight: 800;
-  min-height: 42px;
-  padding: 0 16px;
-  box-shadow: 0 12px 24px rgba(49, 91, 220, 0.22);
+  font-size: 15px;
+  font-weight: 400;
+  min-height: 44px;
+  padding: 0 22px;
+}
+
+.primaryButton:hover {
+  background: var(--blue-focus);
 }
 
 .secondaryButton {
-  background: #e9edf5;
-  color: var(--ink);
-  font-weight: 800;
+  background: var(--panel);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 400;
   min-height: 42px;
-  padding: 0 16px;
+  padding: 0 18px;
+}
+
+.secondaryButton:hover {
+  border-color: rgba(0, 102, 204, 0.35);
 }
 
 .dangerButton {
-  background: #fde8ee;
-  color: #a02e55;
-  font-weight: 900;
+  background: #fff2f6;
+  border: 1px solid rgba(160, 46, 85, 0.18);
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 600;
   min-height: 42px;
-  padding: 0 16px;
+  padding: 0 18px;
 }
 
 .smallButton {
   min-height: 34px;
-  padding: 0 12px;
+  padding: 0 14px;
 }
 
 .notice {
@@ -163,16 +197,16 @@ h3 {
   border-radius: 8px;
   color: #244a91;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   margin: 0 0 18px;
   padding: 11px 12px;
 }
 
 .fieldLabel {
-  color: #465066;
+  color: var(--muted);
   display: grid;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   gap: 8px;
   margin-bottom: 18px;
 }
@@ -181,13 +215,13 @@ input,
 textarea,
 select,
 .textInput {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
   color: var(--ink);
-  min-height: 42px;
+  min-height: 44px;
   outline: none;
-  padding: 10px 12px;
+  padding: 11px 16px;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
@@ -195,6 +229,8 @@ select,
 }
 
 textarea {
+  border-radius: 18px;
+  line-height: 1.47;
   resize: vertical;
 }
 
@@ -202,7 +238,7 @@ input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(49, 91, 220, 0.12);
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.12);
 }
 
 .filterGroup {
@@ -217,7 +253,7 @@ select:focus {
 .filterTitle {
   color: var(--ink);
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
@@ -233,17 +269,19 @@ select:focus {
 
 .chip,
 .tagChip {
-  background: #eef2fa;
-  color: #4c5870;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: #333333;
   font-size: 12px;
-  font-weight: 800;
-  min-height: 31px;
-  padding: 0 10px;
+  font-weight: 400;
+  min-height: 32px;
+  padding: 0 12px;
 }
 
 .chip.active,
 .tagChip.active {
-  background: #263be0;
+  background: var(--blue);
+  border-color: var(--blue);
   color: white;
 }
 
@@ -252,13 +290,13 @@ select:focus {
   color: var(--ink);
   display: flex;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 400;
   gap: 10px;
   margin: 14px 0;
 }
 
 .featuredToggle input {
-  accent-color: var(--violet);
+  accent-color: var(--blue);
   height: 18px;
   min-height: 18px;
   width: 18px;
@@ -273,17 +311,17 @@ select:focus {
 .textButton {
   background: transparent;
   color: var(--blue);
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 400;
   padding: 4px 0;
 }
 
 .countPanel {
-  background: var(--soft);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
   margin-top: 24px;
-  padding: 18px;
+  padding: 20px;
 }
 
 .backupPanel {
@@ -297,35 +335,37 @@ select:focus {
 }
 
 .countPanel span {
+  color: var(--ink);
   display: block;
-  font-size: 34px;
-  font-weight: 900;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-size: 40px;
+  font-weight: 600;
   line-height: 1;
 }
 
 .countPanel p {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   margin: 6px 0 0;
 }
 
 .boardArea {
   min-width: 0;
-  padding: 26px;
+  padding: 28px;
 }
 
 .boardHeader {
   align-items: end;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .boardHeader p:last-child {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 400;
   margin: 0;
 }
 
@@ -340,10 +380,10 @@ select:focus {
 }
 
 .portfolioCard {
-  background: var(--panel);
-  border: 1px solid rgba(220, 225, 234, 0.86);
-  border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(30, 39, 70, 0.07);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  box-shadow: none;
   color: inherit;
   display: flex;
   flex-direction: column;
@@ -356,12 +396,13 @@ select:focus {
   transition:
     box-shadow 180ms ease,
     border-color 180ms ease,
-    transform 180ms ease;
+    background-color 180ms ease;
 }
 
 .portfolioCard:hover,
 .portfolioCard.selected {
-  border-color: rgba(49, 91, 220, 0.42);
+  background: white;
+  border-color: rgba(0, 102, 204, 0.4);
   box-shadow: var(--shadow);
 }
 
@@ -383,57 +424,42 @@ select:focus {
 .featuredBadge {
   border-radius: 999px;
   display: inline-flex;
-  font-size: 11px;
-  font-weight: 900;
+  font-size: 12px;
+  font-weight: 600;
   min-height: 24px;
-  padding: 5px 9px;
+  padding: 5px 10px;
 }
 
 .categoryPill {
-  background: #e9edff;
-  color: var(--blue);
+  background: #f5f5f7;
+  color: #333333;
 }
 
-.categoryPill.activity {
-  background: #e7f6f8;
-  color: var(--cyan);
-}
-
-.categoryPill.certificate {
-  background: #e8f5ef;
-  color: var(--green);
-}
-
-.categoryPill.award {
-  background: #fff0e3;
-  color: var(--orange);
-}
-
-.categoryPill.study {
-  background: #eceaff;
-  color: var(--violet);
-}
-
+.categoryPill.activity,
+.categoryPill.certificate,
+.categoryPill.award,
+.categoryPill.study,
 .categoryPill.retrospective {
-  background: #fdeaf1;
-  color: var(--rose);
+  background: #f5f5f7;
+  color: #333333;
 }
 
 .featuredBadge {
-  background: #161d35;
+  background: var(--dark);
   color: white;
 }
 
 .portfolioCard h3 {
-  font-size: 18px;
+  font-size: 19px;
+  font-weight: 600;
   margin: 0;
 }
 
 .cardThumb,
 .detailThumb,
 .thumbnailPreview {
-  background: #dfe5ee;
-  border-radius: 8px;
+  background: #e8e8ed;
+  border-radius: 12px;
   display: block;
   object-fit: cover;
   width: 100%;
@@ -441,6 +467,7 @@ select:focus {
 
 .cardThumb {
   aspect-ratio: 16 / 9;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08), 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 .detailThumb,
@@ -459,41 +486,37 @@ select:focus {
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 400;
   gap: 8px;
 }
 
 .statusBadge {
   border-radius: 999px;
   display: inline-flex;
-  font-size: 11px;
-  font-weight: 900;
-  min-height: 23px;
-  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 24px;
+  padding: 5px 10px;
 }
 
 .statusBadge.planning {
-  background: #edf1f8;
-  color: #55627a;
+  background: #f5f5f7;
+  color: #333333;
 }
 
-.statusBadge.in-progress {
-  background: #e7f6f8;
-  color: var(--cyan);
-}
-
+.statusBadge.in-progress,
 .statusBadge.done {
-  background: #e8f5ef;
-  color: var(--green);
+  background: #e8f3ff;
+  color: var(--blue);
 }
 
 .statusBadge.archived {
-  background: #f0eefe;
-  color: var(--violet);
+  background: #eeeeef;
+  color: var(--muted);
 }
 
 .summary {
-  color: #4c5870;
+  color: #424245;
   font-size: 14px;
   line-height: 20px;
   margin: 0;
@@ -501,29 +524,29 @@ select:focus {
 
 .stackList span,
 .detailChips span {
-  background: #eef2fa;
-  border-radius: 8px;
-  color: #33405a;
+  background: #f5f5f7;
+  border-radius: 999px;
+  color: #333333;
   font-size: 12px;
-  font-weight: 800;
-  padding: 6px 9px;
+  font-weight: 400;
+  padding: 6px 10px;
 }
 
 .cardTags span,
 .detailChips.tags span {
   color: var(--blue);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 400;
 }
 
 .emptyState {
   align-items: center;
   background: white;
-  border: 1px dashed #c8cfdd;
-  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
   color: var(--muted);
   display: flex;
-  font-weight: 800;
+  font-weight: 400;
   justify-content: center;
   min-height: 260px;
 }
@@ -550,42 +573,42 @@ select:focus {
 }
 
 .detailPanel h2 {
-  font-size: 28px;
+  font-size: 34px;
 }
 
 .detailDate {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 400;
   margin: 0;
 }
 
 .detailSummary {
-  color: #344058;
-  font-size: 15px;
-  line-height: 1.6;
+  color: #424245;
+  font-size: 17px;
+  line-height: 1.47;
   margin: 0;
 }
 
 .detailPanel section {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding-top: 18px;
 }
 
 .detailPanel section p {
-  color: #4f5a70;
-  font-size: 14px;
-  line-height: 1.65;
+  color: #424245;
+  font-size: 15px;
+  line-height: 1.55;
   margin-bottom: 0;
 }
 
 .linkRow a {
-  background: #11182b;
-  border-radius: 8px;
+  background: var(--blue);
+  border-radius: 999px;
   color: white;
-  font-size: 13px;
-  font-weight: 900;
-  padding: 10px 13px;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 16px;
   text-decoration: none;
 }
 
@@ -604,7 +627,8 @@ select:focus {
 
 .modalBackdrop {
   align-items: center;
-  background: rgba(22, 32, 51, 0.48);
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(10px);
   display: flex;
   inset: 0;
   justify-content: center;
@@ -614,9 +638,10 @@ select:focus {
 }
 
 .addModal {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 30px 80px rgba(10, 14, 28, 0.35);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 18px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08), 0 24px 70px rgba(0, 0, 0, 0.18);
   max-height: min(880px, calc(100vh - 44px));
   max-width: 820px;
   overflow: auto;
@@ -632,11 +657,11 @@ select:focus {
 }
 
 .iconButton {
-  background: #edf1f8;
-  color: #29344c;
-  font-weight: 900;
-  height: 36px;
-  width: 36px;
+  background: rgba(210, 210, 215, 0.64);
+  color: var(--ink);
+  font-weight: 600;
+  height: 44px;
+  width: 44px;
 }
 
 .formGrid {

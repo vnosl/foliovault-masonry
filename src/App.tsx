@@ -1,4 +1,4 @@
-import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type ChangeEvent, type FormEvent, type SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { buildMasonryLayout } from './lib/masonry'
 import { loadItems, normalizeItems, saveItems } from './lib/storage'
 import type { PortfolioCategory, PortfolioItem, PortfolioStatus } from './types'
@@ -15,6 +15,7 @@ const categories: Array<'All' | PortfolioCategory> = [
 
 const statuses: Array<'All' | PortfolioStatus> = ['All', 'Planning', 'In Progress', 'Done', 'Archived']
 const editableStatuses: PortfolioStatus[] = ['Planning', 'In Progress', 'Done', 'Archived']
+const fallbackThumbnail = '/thumbnails/fallback.png'
 const sortOptions = [
   { value: 'updated', label: 'Recently updated' },
   { value: 'newest', label: 'Newest created' },
@@ -81,6 +82,11 @@ function parseImportPayload(text: string) {
   const candidate = Array.isArray(parsed) ? parsed : parsed.items
   if (!Array.isArray(candidate)) throw new Error('Invalid backup payload')
   return normalizeItems(candidate)
+}
+
+function useFallbackThumbnail(event: SyntheticEvent<HTMLImageElement>) {
+  if (event.currentTarget.src.endsWith(fallbackThumbnail)) return
+  event.currentTarget.src = fallbackThumbnail
 }
 
 function App() {
@@ -474,7 +480,9 @@ function App() {
                     }}
                     onClick={() => setSelectedId(item.id)}
                   >
-                    {item.thumbnailUrl && <img className="cardThumb" src={item.thumbnailUrl} alt="" loading="lazy" />}
+                    {item.thumbnailUrl && (
+                      <img className="cardThumb" src={item.thumbnailUrl} alt="" loading="lazy" onError={useFallbackThumbnail} />
+                    )}
                     <div className="cardTopline">
                       <span className={`categoryPill ${item.category.toLowerCase()}`}>{item.category}</span>
                       {item.featured && <span className="featuredBadge">Featured</span>}
@@ -506,7 +514,9 @@ function App() {
       <aside className="detailPanel">
         {selectedItem ? (
           <article>
-            {selectedItem.thumbnailUrl && <img className="detailThumb" src={selectedItem.thumbnailUrl} alt="" loading="lazy" />}
+            {selectedItem.thumbnailUrl && (
+              <img className="detailThumb" src={selectedItem.thumbnailUrl} alt="" loading="lazy" onError={useFallbackThumbnail} />
+            )}
             <div className="detailActions">
               <div className="detailMeta">
                 <span className={`categoryPill ${selectedItem.category.toLowerCase()}`}>{selectedItem.category}</span>

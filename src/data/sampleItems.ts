@@ -18,8 +18,7 @@ export const sampleItems: PortfolioItem[] = [
     tags: ['portfolio', 'masonry', 'frontend'],
     githubUrl: 'https://github.com/example/foliovault',
     demoUrl: 'https://example.com/foliovault',
-    thumbnailUrl:
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80',
+    thumbnailUrl: '/thumbnails/foliovault.png',
     featured: true,
     createdAt: '2026-04-15T09:00:00.000Z',
     updatedAt: '2026-04-20T09:00:00.000Z',
@@ -39,8 +38,7 @@ export const sampleItems: PortfolioItem[] = [
     learned:
       'Most rendering issues became clearer after separating state ownership from display components.',
     tags: ['react', 'study', 'performance'],
-    thumbnailUrl:
-      'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80',
+    thumbnailUrl: '/thumbnails/react-notes.png',
     featured: false,
     createdAt: '2026-03-02T13:30:00.000Z',
     updatedAt: '2026-03-15T13:30:00.000Z',
@@ -79,8 +77,7 @@ export const sampleItems: PortfolioItem[] = [
     learned:
       'Accessibility tools need maintenance workflows as much as discovery features.',
     tags: ['accessibility', 'hackathon', 'ux'],
-    thumbnailUrl:
-      'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=80',
+    thumbnailUrl: '/thumbnails/hackathon.png',
     featured: false,
     createdAt: '2025-11-08T11:00:00.000Z',
     updatedAt: '2025-11-10T11:00:00.000Z',
