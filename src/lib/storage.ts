@@ -1,7 +1,7 @@
 import { sampleItems } from '../data/sampleItems'
 import type { PortfolioItem, PortfolioStatus } from '../types'
 
-const STORAGE_KEY = 'foliovault.items.v1'
+const STORAGE_KEY = 'foliovault.items.v2'
 const statuses: PortfolioStatus[] = ['Planning', 'In Progress', 'Done', 'Archived']
 const categories: PortfolioItem['category'][] = ['Project', 'Activity', 'Certificate', 'Award', 'Study', 'Retrospective']
 
